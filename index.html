@@ -12,7 +12,9 @@
    .error { color: red; }
     #groupBox { display: none; margin-top: 15px; padding: 15px; background: #e6ffed; border: 1px solid #b7eb8f; border-radius: 6px; }
     #groupBox a { color: #25D366; font-weight: bold; text-decoration: none; display: block; text-align: center; }
-    #adminSection { display: none; margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px; }
+    #adminLogin { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; }
+    #adminSection { display: none; margin-top: 20px; }
+    #loginMsg { color: red; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -28,9 +30,18 @@
     <a id="groupLink" href="#" target="_blank">Join VOID TECH GROUP WHERE YOU WILL RECEIVE THE FILE</a>
   </div>
 
+  <!-- Admin Panel - hidden until login -->
+  <div id="adminLogin">
+    <h4>Admin Panel</h4>
+    <input type="password" id="adminPass" placeholder="Enter admin password">
+    <button onclick="loginAdmin()">Login</button>
+    <p id="loginMsg"></p>
+  </div>
+
   <div id="adminSection">
     <h4>Admin Panel</h4>
-    <button onclick="downloadVCF()">Download All as VCF</button>
+    <button onclick="downloadVCF()">Download All Contacts as VCF</button>
+    <button onclick="logoutAdmin()" style="background:#db4437;">Logout</button>
   </div>
 
   <script type="module">
@@ -94,13 +105,23 @@
       document.getElementById('phone').value = '';
     }
 
-    window.checkAdmin = function() {
-      const pass = prompt("Enter admin password:");
+    window.loginAdmin = function() {
+      const pass = document.getElementById('adminPass').value;
+      const loginMsg = document.getElementById('loginMsg');
+
       if(pass === ADMIN_PASSWORD) {
         document.getElementById('adminSection').style.display = 'block';
+        document.getElementById('adminLogin').style.display = 'none';
+        loginMsg.textContent = '';
       } else {
-        alert("Wrong password");
+        loginMsg.textContent = "Wrong password";
       }
+    }
+
+    window.logoutAdmin = function() {
+      document.getElementById('adminSection').style.display = 'none';
+      document.getElementById('adminLogin').style.display = 'block';
+      document.getElementById('adminPass').value = '';
     }
 
     window.downloadVCF = async function() {
@@ -124,10 +145,6 @@
       link.download = 'contacts.vcf';
       link.click();
       URL.revokeObjectURL(url);
-    }
-
-    window.onload = function() {
-      checkAdmin();
     }
   </script>
 </body>
