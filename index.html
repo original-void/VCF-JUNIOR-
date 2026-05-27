@@ -2,46 +2,349 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Contact Registration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VOID TECH VCF</title>
+
+  <!-- Google Fonts - Orbitron -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: Arial; padding: 20px; max-width: 400px; margin: auto; }
-    input, button { padding: 10px; margin: 8px 0; width: 100%; box-sizing: border-box; }
-    button { cursor: pointer; background: #4285f4; color: white; border: none; border-radius: 4px; }
-    button:hover { background: #3367d6; }
-    #msg { color: green; margin-top: 10px; }
-   .error { color: red; }
-    #groupBox { display: none; margin-top: 15px; padding: 15px; background: #e6ffed; border: 1px solid #b7eb8f; border-radius: 6px; }
-    #groupBox a { color: #25D366; font-weight: bold; text-decoration: none; display: block; text-align: center; }
-    #adminLogin { margin-top: 40px; border-top: 1px solid #ccc; padding-top: 20px; }
-    #adminSection { display: none; margin-top: 20px; }
-    #loginMsg { color: red; font-size: 14px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #a855f7;
+      --accent: #22d3ee;
+      --dark: #0f0f0f;
+      --card: #1a1a1a;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1e1b2e 50%, #0f0f0f 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #fff;
+    }
+
+   .marquee {
+      width: 100%;
+      overflow: hidden;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      padding: 12px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
+    }
+
+   .marquee-content {
+      display: inline-block;
+      white-space: nowrap;
+      animation: scroll-left 18s linear infinite;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+   .marquee-content span {
+      padding-right: 60px;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+   .container {
+      background: var(--card);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      max-width: 450px;
+      width: 100%;
+      padding: 40px 32px;
+      margin-top: 65px;
+    }
+
+    /* Member counter + progress bar */
+   .stats-box {
+      background: rgba(34, 211, 238, 0.05);
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 25px;
+    }
+
+   .stats-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+   .stats-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+   .stats-count {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+   .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #111;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #333;
+    }
+
+   .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 15px rgba(34, 211, 238, 0.5);
+    }
+
+   .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+   .logo svg {
+      width: 65px;
+      height: 65px;
+    }
+
+    h1 {
+      text-align: center;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+   .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 28px;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    h3, h4 {
+      color: #fff;
+      margin-bottom: 16px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    input, button {
+      padding: 14px 16px;
+      margin: 10px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    input {
+      border: 2px solid #333;
+      background: #111;
+      color: #fff;
+      outline: none;
+      transition: 0.3s;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    input::placeholder {
+      color: #666;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 13px;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      font-size: 15px;
+      transition: 0.3s;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
+    }
+
+    #msg {
+      color: #4ade80;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+
+   .error {
+      color: #f87171;
+    }
+
+    #groupBox {
+      display: none;
+      margin-top: 22px;
+      padding: 22px;
+      background: rgba(34, 211, 238, 0.1);
+      border: 2px solid rgba(34, 211, 238, 0.4);
+      border-radius: 14px;
+    }
+
+    #groupBox p {
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    #groupBox a {
+      color: var(--accent);
+      font-weight: 700;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      font-size: 16px;
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+
+    #adminLogin {
+      margin-top: 38px;
+      border-top: 2px solid #2a2a2a;
+      padding-top: 28px;
+    }
+
+    #adminSection {
+      display: none;
+      margin-top: 28px;
+      padding: 22px;
+      background: #111;
+      border-radius: 14px;
+      border: 1px solid #333;
+    }
+
+    #loginMsg {
+      color: #f87171;
+      font-size: 14px;
+      margin-top: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+   .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+   .btn-danger:hover {
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
   </style>
 </head>
 <body>
-  <h3>Register</h3>
-
-  <input type="text" id="name" placeholder="Full Name" required>
-  <input type="tel" id="phone" placeholder="Phone Number" required>
-  <button onclick="saveContact()">Submit</button>
-  <p id="msg"></p>
-
-  <div id="groupBox">
-    <p>✅ Registered! Join our WhatsApp group to get the contact file:</p>
-    <a id="groupLink" href="#" target="_blank">Join VOID TECH GROUP WHERE YOU WILL RECEIVE THE FILE</a>
+  <!-- Moving Header -->
+  <div class="marquee">
+    <div class="marquee-content">
+      <span>🔥 Welcome to VOID TECH VCF 🔥</span>
+      <span>🔥 Join our community and get exclusive contacts 🔥</span>
+      <span>🔥 Welcome to VOID TECH VCF 🔥</span>
+    </div>
   </div>
 
-  <!-- Admin Panel - hidden until login -->
-  <div id="adminLogin">
-    <h4>Admin Panel</h4>
-    <input type="password" id="adminPass" placeholder="Enter admin password">
-    <button onclick="loginAdmin()">Login</button>
-    <p id="loginMsg"></p>
-  </div>
+  <div class="container">
+    <!-- Member Counter -->
+    <div class="stats-box">
+      <div class="stats-header">
+        <span class="stats-label">Members</span>
+        <span class="stats-count" id="memberCount">0 / 1000</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
 
-  <div id="adminSection">
-    <h4>Admin Panel</h4>
-    <button onclick="downloadVCF()">Download All Contacts as VCF</button>
-    <button onclick="logoutAdmin()" style="background:#db4437;">Logout</button>
+    <div class="logo">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 10 L90 30 V70 L50 90 L10 70 V30 Z" stroke="url(#grad)" stroke-width="4" fill="none"/>
+        <path d="M30 50 H70" stroke="url(#grad)" stroke-width="4" stroke-linecap="round"/>
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="100" y2="100">
+            <stop offset="0%" stop-color="#a855f7"/>
+            <stop offset="100%" stop-color="#22d3ee"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <h1>VOID TECH VCF</h1>
+    <p class="subtitle">Register to join our WhatsApp community</p>
+
+    <h3>Register</h3>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <button onclick="saveContact()">Submit</button>
+    <p id="msg"></p>
+
+    <div id="groupBox">
+      <p>✅ Registered Successfully!</p>
+      <p>Join our WhatsApp group to get the contact file:</p>
+      <a id="groupLink" href="https://chat.whatsapp.com/F0VqKkKJU2DEo2MbIrCqBV" target="_blank">JOIN VOID TECH GROUP</a>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminLogin">
+      <h4>Admin Access</h4>
+      <input type="password" id="adminPass" placeholder="Enter admin password">
+      <button onclick="loginAdmin()">Login to Admin Panel</button>
+      <p id="loginMsg"></p>
+    </div>
+
+    <div id="adminSection">
+      <h4>Admin Panel</h4>
+      <button onclick="downloadVCF()">Download All Contacts as VCF</button>
+      <button onclick="logoutAdmin()" class="btn-danger">Logout</button>
+    </div>
   </div>
 
   <script type="module">
@@ -58,10 +361,26 @@
     };
 
     const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/F0VqKkKJU2DEo2MbIrCqBV";
-    const ADMIN_PASSWORD = "JUNIOR"; // CHANGE THIS PASSWORD
+    const ADMIN_PASSWORD = "JUNIORVOID";
+    const MAX_MEMBERS = 1000; // Change this to your goal
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // Load member count on page load
+    window.addEventListener('DOMContentLoaded', loadMemberCount);
+
+    async function loadMemberCount() {
+      const querySnapshot = await getDocs(collection(db, "contacts"));
+      const count = querySnapshot.size;
+      updateProgressBar(count);
+    }
+
+    function updateProgressBar(count) {
+      const percentage = Math.min((count / MAX_MEMBERS) * 100, 100);
+      document.getElementById('memberCount').textContent = `${count} / ${MAX_MEMBERS}`;
+      document.getElementById('progressFill').style.width = percentage + '%';
+    }
 
     window.saveContact = async function() {
       const name = document.getElementById('name').value.trim();
@@ -100,6 +419,10 @@
       msgEl.textContent = "Registered successfully!";
       groupLink.href = WHATSAPP_GROUP_LINK;
       groupBox.style.display = 'block';
+
+      // Update count + animate bar
+      const newCount = querySnapshot.size + 1;
+      updateProgressBar(newCount);
 
       document.getElementById('name').value = '';
       document.getElementById('phone').value = '';
@@ -142,7 +465,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'contacts.vcf';
+      link.download = 'VOID_TECH_CONTACTS.vcf';
       link.click();
       URL.revokeObjectURL(url);
     }
