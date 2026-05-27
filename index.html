@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Registration</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 400px; margin: auto; }
+    input, button { padding: 10px; margin: 8px 0; width: 100%; box-sizing: border-box; }
+    button { cursor: pointer; background: #4285f4; color: white; border: none; border-radius: 4px; }
+    button:hover { background: #3367d6; }
+    #msg { color: green; margin-top: 10px; }
+  .error { color: red; }
+    #adminSection { display: none; margin-top: 20px; border-top: 1px solid #ccc; padding-top: 20px; }
+    #loginSection { margin-top: 20px; }
+    #userInfo { font-size: 14px; color: #555; }
+    #groupBox { display: none; margin-top: 15px; padding: 15px; background: #e6ffed; border: 1px solid #b7eb8f; border-radius: 6px; }
+    #groupBox a { color: #25D366; font-weight: bold; text-decoration: none; display: block; text-align: center; }
+  </style>
+</head>
+<body>
+  <h3>Register</h3>
+
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="tel" id="phone" placeholder="Phone Number" required>
+  <button onclick="saveContact()">Submit</button>
+  <p id="msg"></p>
+
+  <div id="groupBox">
+    <p>✅ Registered! Join our WhatsApp group to get the contact file:</p>
+    <a id="groupLink" href="#" target="_blank">Join VOID TECH GROUP WHERE YOU WILL RECEIVE THE FILE</a>
+  </div>
+
+  <div id="loginSection">
+    <h4>Admin Login</h4>
+    <button onclick="loginWithGoogle()">Sign in with Google</button>
+  </div>
+
+  <div id="adminSection">
+    <p id="userInfo"></p>
+    <h4>Admin: Export Contacts</h4>
+    <button onclick="downloadVCF()">Download All as VCF</button>
+    <button onclick="logout()" style="background:#db4437;">Logout</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCgk8CtTzK9veFLF9BgHSQl3D56GaN4wws",
+      authDomain: "jujo-4f957.firebaseapp.com",
+      projectId: "jujo-4f957",
+      storageBucket: "jujo-4f957.firebasestorage.app",
+      messagingSenderId: "928077607914",
+      appId: "1:928077607914:web:cf04ad65cc04a840b93893"
+    };
+
+    // REPLACE THIS WITH YOUR WHATSAPP GROUP LINK
+    const WHATSAPP_GROUP_LINK = "https://chat.whatsapp.com/F0VqKkKJU2DEo2MbIrCqBV";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'block';
+        document.getElementById('userInfo').textContent = "Logged in as: " + user.email;
+      } else {
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('adminSection').style.display = 'none';
+      }
+    });
+
+    window.loginWithGoogle = async function() {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        alert("Login failed: " + err.message);
+      }
+    }
+
+    window.logout = async function() {
+      await signOut(auth);
+    }
+
+    window.saveContact = async function() {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const msgEl = document.getElementById('msg');
+      const groupBox = document.getElementById('groupBox');
+      const groupLink = document.getElementById('groupLink');
+
+      msgEl.className = '';
+      msgEl.textContent = '';
+      groupBox.style.display = 'none';
+
+      if(!name ||!phone) {
+        msgEl.textContent = "Name and Phone are required";
+        msgEl.className = 'error';
+        return;
+      }
+
+      const cleanPhone = phone.replace(/[\s\-\(\)]/g, '');
+
+      const q = query(collection(db, "contacts"), where("phone", "==", cleanPhone));
+      const querySnapshot = await getDocs(q);
+
+      if(!querySnapshot.empty) {
+        msgEl.textContent = "This number is already registered";
+        msgEl.className = 'error';
+        return;
+      }
+
+      await addDoc(collection(db, "contacts"), {
+        name,
+        phone: cleanPhone,
+        createdAt: Date.now()
+      });
+
+      msgEl.textContent = "Registered successfully!";
+      groupLink.href = WHATSAPP_GROUP_LINK;
+      groupBox.style.display = 'block';
+
+      document.getElementById('name').value = '';
+      document.getElementById('phone').value = '';
+    }
+
+    window.downloadVCF = async function() {
+      const user = auth.currentUser;
+      if(!user){
+        alert("You must be logged in");
+        return;
+      }
+
+      const querySnapshot = await getDocs(collection(db, "contacts"));
+      let vcfData = "";
+
+      querySnapshot.forEach((doc) => {
+        const c = doc.data();
+        vcfData += `BEGIN:VCARD\nVERSION:3.0\nFN:${c.name}\nTEL;TYPE=CELL:${c.phone}\nEND:VCARD\n`;
+      });
+
+      if(!vcfData) {
+        alert("No contacts to export");
+        return;
+      }
+
+      const blob = new Blob([vcfData], { type: 'text/vcard' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'contacts.vcf';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
